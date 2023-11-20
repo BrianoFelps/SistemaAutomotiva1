@@ -193,6 +193,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Ordem de Servi&#xe7;o"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jMoSMouseClicked"/>
+          </Events>
         </Menu>
         <Menu class="javax.swing.JMenu" name="jMorc">
           <Properties>

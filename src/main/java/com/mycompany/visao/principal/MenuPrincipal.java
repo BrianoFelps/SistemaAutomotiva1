@@ -6,6 +6,7 @@ package com.mycompany.visao.principal;
 
 import com.mycompany.ferramentas.BancoDeDadosMySQL;
 import com.mycompany.ferramentas.Formularios;
+import com.mycompany.visao.OrdServ.Ordem_de_servico;
 import com.mycompany.visao.PrSr.CadProdServ;
 import com.mycompany.visao.PrSr.ListProdServ;
 import com.mycompany.visao.Veiculo.CadVeiculo;
@@ -277,6 +278,11 @@ public class MenuPrincipal extends javax.swing.JFrame {
         jMenuBar1.add(jMenu2);
 
         jMoS.setText("Ordem de Serviço");
+        jMoS.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMoSMouseClicked(evt);
+            }
+        });
         jMenuBar1.add(jMoS);
 
         jMorc.setText("Orçamento");
@@ -483,6 +489,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
         Formularios.CadProdServ.setVisible(true);
     }//GEN-LAST:event_cadProdSActionPerformed
+
+    private void jMoSMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMoSMouseClicked
+        // TODO add your handling code here:
+        if(Formularios.Ordem_de_servico == null);
+        Formularios.Ordem_de_servico = new Ordem_de_servico();
+        
+        Formularios.Ordem_de_servico.setVisible(true);
+    }//GEN-LAST:event_jMoSMouseClicked
 
     /**
      * @param args the command line arguments

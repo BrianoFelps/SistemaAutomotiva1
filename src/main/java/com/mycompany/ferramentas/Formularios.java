@@ -35,4 +35,6 @@ public class Formularios {
     public static JFrame CadProdServ;
     public static JFrame ListProdServ;
     //
+    
+    public static JFrame Ordem_de_servico;
 }

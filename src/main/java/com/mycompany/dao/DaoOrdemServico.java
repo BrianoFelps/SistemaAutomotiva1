@@ -14,9 +14,9 @@ import java.sql.Date;
 public class DaoOrdemServico extends BancoDeDadosMySQL{
     private String sql;
     
-    public Boolean inserir (int id, int idEmp, int idVeic, int idCliente, int idProdSer, int idFuncionario, String obs, Date FaturaIn, Date FaturaFim){
+    public Boolean inserir (int id, int idEmp, int idVeic, int idCliente, int idGser, int idFuncionario, String obs){
         try{
-        sql = "INSERT INTO ORDEM_DE_SERVICO (ID, IDEMPRESA, IDVEICULO, IDCLIENTE, IDPRODSER, IDFUNCIONARIO, OBSERVACAO, FATURAIN, FATURAFIM) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        sql = "INSERT INTO ORDEM_DE_SERVICO (ID, IDEMPRESA, IDVEICULO, IDCLIENTE, IDGSERVICO, IDFUNCIONARIO, OBSERVACAO) VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         setStatement(getConexao().prepareStatement(sql));
         
@@ -24,11 +24,9 @@ public class DaoOrdemServico extends BancoDeDadosMySQL{
         getStatement().setInt(2, idEmp);
         getStatement().setInt(3, idVeic);
         getStatement().setInt(4, idCliente);
-        getStatement().setInt(5, idProdSer);
+        getStatement().setInt(5, idGser);
         getStatement().setInt(6, idFuncionario);
         getStatement().setString(7, obs);
-        getStatement().setDate(8, FaturaIn);
-        getStatement().setDate(9, FaturaFim);
 
             getStatement().executeUpdate();
             
@@ -40,22 +38,20 @@ public class DaoOrdemServico extends BancoDeDadosMySQL{
         }
     }
     
-    public Boolean alterar (int id, int nidEmp, int nidVeic, int nidCliente, int nidProdSer, int nidFuncionario, String nobs, Date nFaturaIn, Date nFaturaFim){
+    public Boolean alterar (int id, int nidEmp, int nidVeic, int nidCliente, int nidGser, int nidFuncionario, String nobs){
     try{
-        sql = "UPDATE ORDEM_DE_SERVICO SET IDEMPRESA = ?, IDVEICULO = ?, IDCLIENTE = ?, IDPRODSER = ?, IDFUNCIONARIO = ?, OBSERVACAO = ?, FATURAIN = ?, FATURAFIM = ? WHERE ID= ?";
+        sql = "UPDATE ORDEM_DE_SERVICO SET IDEMPRESA = ?, IDVEICULO = ?, IDCLIENTE = ?, IDGSERVICO = ?, IDFUNCIONARIO = ?, OBSERVACAO = ? WHERE ID= ?";
         
         setStatement(getConexao().prepareStatement(sql));
         
-        getStatement().setInt(9, id);
         getStatement().setInt(1, nidEmp);
         getStatement().setInt(2, nidVeic);
         getStatement().setInt(3, nidCliente);
-        getStatement().setInt(4, nidProdSer);
+        getStatement().setInt(4, nidGser);
         getStatement().setInt(5, nidFuncionario);
         getStatement().setString(6, nobs);
-        getStatement().setDate(7, nFaturaIn);
-        getStatement().setDate(8, nFaturaIn);
-
+        getStatement().setInt(7, id);
+        
             getStatement().executeUpdate();
             
             return true;
@@ -63,5 +59,41 @@ public class DaoOrdemServico extends BancoDeDadosMySQL{
             System.out.println(e.getMessage());
             return false;
     }
+    }
+    
+    public Boolean excluir (int id){
+        try{
+            sql = "DELETE FROM ORDEM_DE_SERVICO WHERE ID = ?";
+            
+            setStatement(getConexao().prepareStatement(sql));
+            
+            getStatement().setInt(1, id);
+            
+            getStatement().executeUpdate();
+            
+            return true;
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    
+    public int buscarProximoId (){
+        int id = -1;
+        
+        try{
+            sql = "SELECT IFNULL (MAX(ID), 0) + 1 FROM ORDEM_DE_SERVICO";
+            
+            setStatement(getConexao().prepareStatement(sql));
+            
+            setResultado(getStatement().executeQuery());
+            
+            getResultado().next();
+           
+            id = getResultado().getInt(1);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        return id;
     }
 }

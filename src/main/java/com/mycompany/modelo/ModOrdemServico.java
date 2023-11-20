@@ -11,14 +11,13 @@ import java.sql.Date;
  * @author brian.7908
  */
 public class ModOrdemServico {
-    private int id, idEmp, idVeic, idCliente, idProdSer, idFuncionario;
+    private int id, idEmp, idVeic, idCliente, idProdSer, idFuncionario, idGs;
     private String obs;
-    private Date FaturaIn, FaturaFim;
 
     public ModOrdemServico() {
     }
 
-    public ModOrdemServico(int id, int idEmp, int idVeic, int idCliente, int idProdSer, int idFuncionario, String obs, Date FaturaIn, Date FaturaFim) {
+    public ModOrdemServico(int id, int idEmp, int idVeic, int idCliente, int idProdSer, int idFuncionario, String obs) {
         this.id = id;
         this.idEmp = idEmp;
         this.idVeic = idVeic;
@@ -26,8 +25,7 @@ public class ModOrdemServico {
         this.idProdSer = idProdSer;
         this.idFuncionario = idFuncionario;
         this.obs = obs;
-        this.FaturaIn = FaturaIn;
-        this.FaturaFim = FaturaFim;
+        this.idGs = idGs;
     }
 
     public int getId() {
@@ -86,24 +84,16 @@ public class ModOrdemServico {
         this.obs = obs;
     }
 
-    public Date getFaturaIn() {
-        return FaturaIn;
+    public int getIdGs() {
+        return idGs;
     }
 
-    public void setFaturaIn(Date FaturaIn) {
-        this.FaturaIn = FaturaIn;
-    }
-
-    public Date getFaturaFim() {
-        return FaturaFim;
-    }
-
-    public void setFaturaFim(Date FaturaFim) {
-        this.FaturaFim = FaturaFim;
+    public void setIdGs(int idGs) {
+        this.idGs = idGs;
     }
     
     @Override
     public String toString(){
-        return "ModOrdemServico{" + "id=" + id + ", idEmpresa =" + idEmp + ", idVeiculo=" + idVeic + ", idCliente=" + idCliente + ", idProdSer=" + idProdSer + ", idFuncionario=" + idFuncionario + ", Observação=" + obs + ", FaturaIn=" + FaturaIn + ", FaturaFim" + FaturaFim + '}';
+        return "ModOrdemServico{" + "id=" + id + ", idEmpresa =" + idEmp + ", idVeiculo=" + idVeic + ", idCliente=" + idCliente + ", idProdSer=" + idProdSer + ", idGservico =" + idGs + ", idFuncionario=" + idFuncionario + ", Observação=" + obs + '}';
     }
 }
