@@ -14,9 +14,9 @@ import java.sql.Date;
 public class DaoOrdemServico extends BancoDeDadosMySQL{
     private String sql;
     
-    public Boolean inserir (int id, int idEmp, int idVeic, int idCliente, int idGser, int idFuncionario, String obs){
+    public Boolean inserir (int id, int idEmp, int idVeic, int idCliente, int idGser, int idFuncionario, String obs, Date expiracao){
         try{
-        sql = "INSERT INTO ORDEM_DE_SERVICO (ID, IDEMPRESA, IDVEICULO, IDCLIENTE, IDGSERVICO, IDFUNCIONARIO, OBSERVACAO) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        sql = "INSERT INTO ORDEM_DE_SERVICO (ID, IDEMPRESA, IDVEICULO, IDCLIENTE, IDGSERVICO, IDFUNCIONARIO, OBSERVACAO, EXPIRACAO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         setStatement(getConexao().prepareStatement(sql));
         
@@ -27,6 +27,7 @@ public class DaoOrdemServico extends BancoDeDadosMySQL{
         getStatement().setInt(5, idGser);
         getStatement().setInt(6, idFuncionario);
         getStatement().setString(7, obs);
+        getStatement().setDate(8, expiracao);
 
             getStatement().executeUpdate();
             
@@ -38,9 +39,9 @@ public class DaoOrdemServico extends BancoDeDadosMySQL{
         }
     }
     
-    public Boolean alterar (int id, int nidEmp, int nidVeic, int nidCliente, int nidGser, int nidFuncionario, String nobs){
+    public Boolean alterar (int id, int nidEmp, int nidVeic, int nidCliente, int nidGser, int nidFuncionario, String nobs, Date nEx){
     try{
-        sql = "UPDATE ORDEM_DE_SERVICO SET IDEMPRESA = ?, IDVEICULO = ?, IDCLIENTE = ?, IDGSERVICO = ?, IDFUNCIONARIO = ?, OBSERVACAO = ? WHERE ID= ?";
+        sql = "UPDATE ORDEM_DE_SERVICO SET IDEMPRESA = ?, IDVEICULO = ?, IDCLIENTE = ?, IDGSERVICO = ?, IDFUNCIONARIO = ?, OBSERVACAO = ?, EXPIRACAO = ? WHERE ID= ?";
         
         setStatement(getConexao().prepareStatement(sql));
         
@@ -51,6 +52,7 @@ public class DaoOrdemServico extends BancoDeDadosMySQL{
         getStatement().setInt(5, nidFuncionario);
         getStatement().setString(6, nobs);
         getStatement().setInt(7, id);
+        getStatement().setDate(8, nEx);
         
             getStatement().executeUpdate();
             

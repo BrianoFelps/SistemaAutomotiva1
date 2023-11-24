@@ -9,6 +9,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -38,6 +41,37 @@ public class BancoDeDadosMySQL {
                 }
                   return conexao;
             }
+            
+            public static void ExclusaoAutomatica() {
+        // Inicializa o serviço de agendamento
+                ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        // Agendamento da tarefa de exclusão a cada 24 horas (pode ajustar conforme necessário)
+        scheduler.scheduleAtFixedRate(BancoDeDadosMySQL::executarExclusao, 0, 24, TimeUnit.HOURS);
+    }
+            
+            private static void executarExclusao() {
+        try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA)) {
+            
+           // Define a data limite para 60 dias no futuro
+            long limite = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(60);
+
+            // Cria a instrução SQL para excluir registros expirados
+            String sql = "DELETE FROM ORDEM_DE_SERVICO WHERE EXPIRACAO < ?";
+            
+            try (PreparedStatement preparedStatement = conexao.prepareStatement(sql)) {
+                preparedStatement.setTimestamp(1, new java.sql.Timestamp(limite));
+                
+                // Executa a instrução SQL
+                int linhasAfetadas = preparedStatement.executeUpdate();
+                
+                // Exibe o número de registros excluídos (opcional)
+                System.out.println("Registros excluídos: " + linhasAfetadas);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
             
             public static void fecharConexao(Connection conexao){
                 if (conexao != null){

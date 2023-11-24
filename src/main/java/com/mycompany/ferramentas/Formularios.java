@@ -36,5 +36,8 @@ public class Formularios {
     public static JFrame ListProdServ;
     //
     
+    //
     public static JFrame Ordem_de_servico;
+    public static JFrame List_OS;
+    //
 }

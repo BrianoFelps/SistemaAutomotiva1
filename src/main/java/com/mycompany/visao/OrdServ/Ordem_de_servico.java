@@ -8,13 +8,17 @@ import com.mycompany.dao.DaoCliente;
 import com.mycompany.dao.DaoEmpresa;
 import com.mycompany.dao.DaoFuncionario;
 import com.mycompany.dao.DaoGpServico;
+import com.mycompany.dao.DaoMarca;
 import com.mycompany.dao.DaoOrdemServico;
 import com.mycompany.dao.DaoPrSr;
 import com.mycompany.dao.DaoVeiculo;
+import com.mycompany.ferramentas.BancoDeDadosMySQL;
 import com.mycompany.ferramentas.Constantes;
 import com.mycompany.ferramentas.DadosTemporarios;
+import com.mycompany.ferramentas.Formularios;
 import com.mycompany.modelo.ModCliente;
 import com.mycompany.modelo.ModFuncionario;
+import com.mycompany.modelo.ModMarca;
 import com.mycompany.modelo.ModOrdemServico;
 import com.mycompany.modelo.ModPessoa;
 import com.mycompany.modelo.ModVeiculo;
@@ -25,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 
 /**
@@ -72,14 +77,35 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         
            initComponents();
         setExtendedState(MAXIMIZED_BOTH);
+        BancoDeDadosMySQL.ExclusaoAutomatica();
+        
+        carregarEmpresas();
+        carregarClientes();
+        carregarMarcas();
+        carregarResp();
+        carregarGrupos();
+        carregarExec();
         
         if (!existeDadosTemporarios()){
             DaoOrdemServico daoO = new DaoOrdemServico();
+            DaoCliente daoC = new DaoCliente();
+            DaoMarca daoM = new DaoMarca();
+            DaoFuncionario daoF = new DaoFuncionario();
+            DaoEmpresa daoE = new DaoEmpresa();
             
             int id = daoO.buscarProximoId();
+            int idC = daoC.buscarProximoId();
+            int idM = daoM.buscarProximoId();
+            int idF = daoF.buscarProximoId();
+            int idE = daoE.buscarProximoId();
             
             if(id>0){
                 tfId.setText(String.valueOf(id));
+                tfIdEmpresa.setText(String.valueOf(idE));
+                tfIdCliente.setText(String.valueOf(idC));
+                tfIdMV.setText(String.valueOf(idM));
+                tfIdResponsavel.setText(String.valueOf(idF));
+                tfIdExServ.setText(String.valueOf(idF));
             }
             btnAcao.setText(Constantes.BTN_SALVAR_TEXT);
             }else{
@@ -235,22 +261,31 @@ public class Ordem_de_servico extends javax.swing.JFrame {
             String veic = ((ModVeiculo) DadosTemporarios.tempObject1).getNome();
             String placa = ((ModVeiculo) DadosTemporarios.tempObject1).getPlaca();
             int ano = ((ModVeiculo) DadosTemporarios.tempObject1).getAno();
-            
+            tfVeiculo.setText(veic);
             ftPlaca.setText(placa);
             tfAno.setText(String.valueOf(ano));
+            //
             
             //
             int idCliente = ((ModCliente) DadosTemporarios.tempObject2).getId();
-            
             tfIdCliente.setText(String.valueOf(idCliente));
+            //
             
+            //
             String telefone = ((ModPessoa) DadosTemporarios.tempObject3).getTel();
-            ftTelefone.setText(String.valueOf(telefone));   
+            ftTelefone.setText(String.valueOf(telefone));
+            //
+            
+            //
+            int idMarca = ((ModMarca) DadosTemporarios.tempObject4).getId();
+            tfIdMV.setText(String.valueOf(idMarca));
+            //
             
             DadosTemporarios.tempObject = null;
             DadosTemporarios.tempObject1 = null;
             DadosTemporarios.tempObject2 = null;
             DadosTemporarios.tempObject3 = null;
+            DadosTemporarios.tempObject4 = null;
             
                 return true;
         }else
@@ -260,7 +295,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     private void inserir(){
         DaoOrdemServico daoO = new DaoOrdemServico();
         
-        if(daoO.inserir(Integer.parseInt(tfId.getText()), Integer.parseInt(tfIdEmpresa.getText()), Integer.parseInt(tfIdVeiculo.getText()), Integer.parseInt(tfIdCliente.getText()), Integer.parseInt(tfIdGrupo.getText()), Integer.parseInt(tfIdResponsavel.getText()), taDescCli.getText())){
+        if(daoO.inserir(Integer.parseInt(tfId.getText()), Integer.parseInt(tfIdEmpresa.getText()), Integer.parseInt(tfIdVeiculo.getText()), Integer.parseInt(tfIdCliente.getText()), Integer.parseInt(tfIdGrupo.getText()), Integer.parseInt(tfIdResponsavel.getText()), taDescCli.getText(), Date.valueOf(ftExpira.getText()))){
         JOptionPane.showMessageDialog(null, "Dados da ordem de serviço adicionados ao banco de dados!");
         
         taDescCli.setText("");
@@ -269,6 +304,216 @@ public class Ordem_de_servico extends javax.swing.JFrame {
 }
     }
     
+    private void inserirVeiculo(){
+        DaoVeiculo daoV = new DaoVeiculo();
+        
+        if(daoV.inserir(Integer.parseInt(tfIdVeiculo.getText()), Integer.parseInt(tfIdMV.getText()), tfVeiculo.getText(), ftPlaca.getText(), Integer.parseInt(tfAno.getText()))){
+            JOptionPane.showMessageDialog(null, "Veículo salvo com sucesso!");
+            
+            tfVeiculo.setText("");
+            ftPlaca.setText("");
+            tfAno.setText("");
+            
+        }else {
+            JOptionPane.showMessageDialog(null, "Não foi possível salvar o veículo!");
+        }
+    }
+    
+    private void alterar(){
+        DaoOrdemServico daoO = new DaoOrdemServico();
+        
+        if(daoO.alterar(Integer.parseInt(tfId.getText()), Integer.parseInt(tfIdEmpresa.getText()), Integer.parseInt(tfIdVeiculo.getText()), Integer.parseInt(tfIdCliente.getText()), Integer.parseInt(tfIdGrupo.getText()), Integer.parseInt(tfIdResponsavel.getText()), taDescCli.getText(), Date.valueOf(ftExpira.getText()))){
+              JOptionPane.showMessageDialog(null, "Ordem de serviço alterada!");
+              
+            taDescCli.setText("");
+            
+        }else{
+        JOptionPane.showMessageDialog(null, "Não foi possível alterar a ordem de serviço!");
+        }
+        
+        ((List_OS) Formularios.List_OS).listarTodos();
+        
+        dispose();
+    }
+    
+    private void alterarVeiculo(){
+        DaoVeiculo daoV = new DaoVeiculo();
+        
+        if(daoV.alterar(Integer.parseInt(tfIdVeiculo.getText()), Integer.parseInt(tfIdMV.getText()), tfVeiculo.getText(), ftPlaca.getText(), Integer.parseInt(tfAno.getText()))){
+            JOptionPane.showMessageDialog(null, "Veículo alterado com sucesso!");
+            
+            tfVeiculo.setText("");
+            ftPlaca.setText("");
+            tfAno.setText("");
+            
+        }else {
+            JOptionPane.showMessageDialog(null, "Não foi possível alterar o veículo!");
+        }
+    }
+    
+    private void carregarEmpresas(){
+        try{
+            DaoEmpresa daoE = new DaoEmpresa();
+
+            ResultSet resultSet = daoE.listarTodos();
+
+            while(resultSet.next()){
+                jcbEmpresa.addItem(resultSet.getString("NOME"));
+            }
+        }catch(Exception e){
+            
+        }
+    }
+        
+        private void recuperaIdEmp(){
+        try{
+            DaoEmpresa daoE = new DaoEmpresa();
+            ResultSet resultSet = daoE.listarPorNome(jcbEmpresa.getSelectedItem().toString());
+            resultSet.next();
+            tfIdEmpresa.setText(resultSet.getString("ID"));
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+        
+    private void carregarMarcas(){
+        try{
+            DaoMarca daoM = new DaoMarca();
+
+            ResultSet resultSet = daoM.listarTodos();
+
+            while(resultSet.next()){
+                jcbMarcaVeiculo.addItem(resultSet.getString("NOME"));
+            }
+        }catch(Exception e){
+            
+        }
+    }
+        
+        private void recuperaIdMarca(){
+        try{
+            DaoMarca daoM = new DaoMarca();
+            ResultSet resultSet = daoM.listarPorNome(jcbMarcaVeiculo.getSelectedItem().toString());
+            resultSet.next();
+            tfIdMV.setText(resultSet.getString("ID"));
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+        
+    private void carregarClientes(){
+        try{
+            DaoCliente daoC = new DaoCliente();
+
+            ResultSet resultSet = daoC.listarTodos();
+
+            while(resultSet.next()){
+                jcbCliente.addItem(resultSet.getString("P.NOME"));
+            }
+        }catch(Exception e){
+            
+        }
+    }
+        
+        private void recuperaIdCliente(){
+        try{
+            DaoCliente daoC = new DaoCliente();
+            ResultSet resultSet = daoC.listarPorNome(jcbCliente.getSelectedItem().toString());
+            resultSet.next();
+            tfIdCliente.setText(resultSet.getString("C.ID"));
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+        
+    private void carregarResp(){
+        try{
+            DaoFuncionario daoF = new DaoFuncionario();
+
+            ResultSet resultSet = daoF.listarTodos();
+
+            while(resultSet.next()){
+                jcbResponsavel.addItem(resultSet.getString("P.NOME"));
+            }
+        }catch(Exception e){
+            
+        }
+    }
+        
+        private void recuperaIdResponsavel(){
+        try{
+            DaoFuncionario daoF = new DaoFuncionario();
+            ResultSet resultSet = daoF.listarPorNome(jcbResponsavel.getSelectedItem().toString());
+            resultSet.next();
+            tfIdResponsavel.setText(resultSet.getString("FR.ID"));
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+        
+    private void carregarGrupos(){
+        try{
+            DaoGpServico daoG = new DaoGpServico();
+
+            ResultSet resultSet = daoG.listarTodos();
+
+            while(resultSet.next()){
+                jcbGrupo.addItem(resultSet.getString("NOME"));
+            }
+        }catch(Exception e){
+            
+        }
+    }
+        
+        private void recuperaIdGrupo(){
+        try{
+            DaoGpServico daoG = new DaoGpServico();
+            ResultSet resultSet = daoG.listarPorNome(jcbGrupo.getSelectedItem().toString());
+            resultSet.next();
+            tfIdGrupo.setText(resultSet.getString("ID"));
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+        
+    private void carregarExec(){
+        try{
+            DaoFuncionario daoF = new DaoFuncionario();
+
+            ResultSet resultSet = daoF.listarTodos();
+
+            while(resultSet.next()){
+                jcbExecutor.addItem(resultSet.getString("P.NOME"));
+            }
+        }catch(Exception e){
+            
+        }
+    }
+        
+        private void recuperaIdExec(){
+        try{
+            DaoFuncionario daoF = new DaoFuncionario();
+            ResultSet resultSet = daoF.listarPorNome(jcbExecutor.getSelectedItem().toString());
+            resultSet.next();
+            tfIdExServ.setText(resultSet.getString("FR.ID"));
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+    
+        private boolean camposObrigatoriosPreenchidos(JTextField campos[]){
+            boolean b = true;
+            
+            for (int i = 0; i < campos.length; i++) {
+                if(campos[i].getText().equals("")){
+                JOptionPane.showMessageDialog(null, "O campo " + campos[i].getToolTipText() + " é obrigatório!");
+                campos[i].requestFocus();
+                b = false;
+                break;
+                }
+            }
+            return b;
+        }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -290,9 +535,9 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jcbMarcaVeiculo = new javax.swing.JComboBox<>();
-        jLabel7 = new javax.swing.JLabel();
         tfIdEmpresa = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jcbResponsavel = new javax.swing.JComboBox<>();
@@ -340,7 +585,10 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         ftFatura1 = new JFormattedTextField(mfFatura);
         ftFatura2 = new JFormattedTextField(mfFatura);
         jLabel25 = new javax.swing.JLabel();
-        tfVeículo = new javax.swing.JTextField();
+        tfVeiculo = new javax.swing.JTextField();
+        tfIdMV = new javax.swing.JTextField();
+        jLabel26 = new javax.swing.JLabel();
+        ftExpira = new JFormattedTextField(mfFatura);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Ordem de serviço");
@@ -351,6 +599,16 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         jLabel1.setText("Dados da ordem de serviço");
 
         jcbEmpresa.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jcbEmpresa.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jcbEmpresaItemStateChanged(evt);
+            }
+        });
+        jcbEmpresa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jcbEmpresaActionPerformed(evt);
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel2.setText("Empresa");
@@ -370,12 +628,17 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         jLabel6.setText("Marca do veículo");
 
         jcbMarcaVeiculo.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel7.setText("Ano");
+        jcbMarcaVeiculo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jcbMarcaVeiculoItemStateChanged(evt);
+            }
+        });
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel8.setText("Cliente");
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        jLabel7.setText("Ano");
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel9.setText("Telefone");
@@ -384,6 +647,11 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         jLabel10.setText("Responsável");
 
         jcbResponsavel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jcbResponsavel.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jcbResponsavelItemStateChanged(evt);
+            }
+        });
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel11.setText("Observação");
@@ -421,8 +689,18 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         jLabel18.setText("$ Total");
 
         jcbGrupo.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jcbGrupo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jcbGrupoItemStateChanged(evt);
+            }
+        });
 
         jcbExecutor.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jcbExecutor.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jcbExecutorItemStateChanged(evt);
+            }
+        });
 
         jLabel19.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel19.setText("Grupo");
@@ -598,6 +876,11 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         });
 
         jcbCliente.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jcbCliente.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jcbClienteItemStateChanged(evt);
+            }
+        });
 
         ftPlaca.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
@@ -610,7 +893,12 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         jLabel25.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel25.setText("Veículo");
 
-        tfVeículo.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        tfVeiculo.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
+        jLabel26.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jLabel26.setText("Data de expiração do serviço");
+
+        ftExpira.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -625,7 +913,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel1)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(6, 6, 6)
+                                    .addGap(0, 0, 0)
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabel11)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
@@ -661,7 +949,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                                     .addComponent(jLabel25)
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                    .addComponent(tfVeículo)
+                                                    .addComponent(tfVeiculo)
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                     .addComponent(jLabel7)
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -674,7 +962,11 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                             .addComponent(jLabel3)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(tfId, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(tfId, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(36, 36, 36)
+                                            .addComponent(jLabel26)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(ftExpira, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                             .addComponent(jLabel2)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -690,7 +982,9 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(jLabel24)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(ftFatura2, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                            .addComponent(ftFatura2, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(tfIdMV, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                             .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
@@ -699,11 +993,13 @@ public class Ordem_de_servico extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(13, 13, 13)
                 .addComponent(jLabel1)
-                .addGap(13, 13, 13)
+                .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(tfId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
+                    .addComponent(tfId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel26)
+                    .addComponent(ftExpira, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(19, 19, 19)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jcbEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
@@ -712,7 +1008,8 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                     .addComponent(jLabel12)
                     .addComponent(jLabel24)
                     .addComponent(ftFatura1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ftFatura2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ftFatura2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfIdMV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(17, 17, 17)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -724,7 +1021,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                     .addComponent(tfIdResponsavel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ftPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel25)
-                    .addComponent(tfVeículo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tfVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(22, 22, 22)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
@@ -765,7 +1062,49 @@ public class Ordem_de_servico extends javax.swing.JFrame {
 
     private void btnAcaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcaoActionPerformed
         // TODO add your handling code here:
+        DaoOrdemServico daoO = new DaoOrdemServico();
+        DaoVeiculo daoV = new DaoVeiculo();
+        
+        if(camposObrigatoriosPreenchidos(new JTextField[]{tfVeiculo, tfAno, ftExpira, ftFatura1, ftFatura2, ftPlaca})){
+        inserir();
+        inserirVeiculo();
+    }
     }//GEN-LAST:event_btnAcaoActionPerformed
+
+    private void jcbEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbEmpresaActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jcbEmpresaActionPerformed
+
+    private void jcbEmpresaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jcbEmpresaItemStateChanged
+        // TODO add your handling code here:
+        recuperaIdEmp();
+    }//GEN-LAST:event_jcbEmpresaItemStateChanged
+
+    private void jcbMarcaVeiculoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jcbMarcaVeiculoItemStateChanged
+        // TODO add your handling code here:
+        recuperaIdMarca();
+    }//GEN-LAST:event_jcbMarcaVeiculoItemStateChanged
+
+    private void jcbClienteItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jcbClienteItemStateChanged
+        // TODO add your handling code here:
+        recuperaIdCliente();
+    }//GEN-LAST:event_jcbClienteItemStateChanged
+
+    private void jcbResponsavelItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jcbResponsavelItemStateChanged
+        // TODO add your handling code here:
+        recuperaIdResponsavel();
+    }//GEN-LAST:event_jcbResponsavelItemStateChanged
+
+    private void jcbGrupoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jcbGrupoItemStateChanged
+        // TODO add your handling code here:
+        recuperaIdGrupo();
+    }//GEN-LAST:event_jcbGrupoItemStateChanged
+
+    private void jcbExecutorItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jcbExecutorItemStateChanged
+        // TODO add your handling code here:
+        recuperaIdExec();
+    }//GEN-LAST:event_jcbExecutorItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -804,6 +1143,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAcao;
+    private javax.swing.JFormattedTextField ftExpira;
     private javax.swing.JFormattedTextField ftFatura1;
     private javax.swing.JFormattedTextField ftFatura2;
     private javax.swing.JFormattedTextField ftPlaca;
@@ -829,6 +1169,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -860,11 +1201,12 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     private javax.swing.JTextField tfIdEmpresa;
     private javax.swing.JTextField tfIdExServ;
     private javax.swing.JTextField tfIdGrupo;
+    private javax.swing.JTextField tfIdMV;
     private javax.swing.JTextField tfIdProdS;
     private javax.swing.JTextField tfIdResponsavel;
     private javax.swing.JTextField tfIdVeiculo;
     private javax.swing.JTextField tfQnt;
-    private javax.swing.JTextField tfVeículo;
+    private javax.swing.JTextField tfVeiculo;
     private javax.swing.JTextField tfVun1;
     // End of variables declaration//GEN-END:variables
 
