@@ -17,18 +17,16 @@ import com.mycompany.ferramentas.Constantes;
 import com.mycompany.ferramentas.DadosTemporarios;
 import com.mycompany.ferramentas.Formularios;
 import com.mycompany.modelo.ModCliente;
-import com.mycompany.modelo.ModFuncionario;
 import com.mycompany.modelo.ModMarca;
 import com.mycompany.modelo.ModOrdemServico;
 import com.mycompany.modelo.ModPessoa;
 import com.mycompany.modelo.ModVeiculo;
-import java.sql.Date;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -80,8 +78,15 @@ public class Ordem_de_servico extends javax.swing.JFrame {
            initComponents();
         setExtendedState(MAXIMIZED_BOTH);
         BancoDeDadosMySQL.ExclusaoAutomatica();
-        
+    
         CarregarAll();
+        
+        jcbProdS.addActionListener(new ActionListener() {
+                @Override
+                    public void actionPerformed(ActionEvent e) {
+                carregarGrupoParaProdutoSelecionado();
+            }
+            });
         
         if (!existeDadosTemporarios()){
             DaoOrdemServico daoO = new DaoOrdemServico();
@@ -231,21 +236,40 @@ public class Ordem_de_servico extends javax.swing.JFrame {
             
               //
             try{
-                DaoGpServico daoG = new DaoGpServico();
-                ResultSet resultSet = daoG.listarPorId(idGs);
+                DaoPrSr daoP = new DaoPrSr();
+                ResultSet resultSet = daoP.listarPorId(idProd);
                 resultSet.next();
-                String Gs = resultSet.getString("NOME");
+                String Ps = resultSet.getString("P.NOME");
                 int index = 0;
-                for(int i = 0; i < jcbGrupo.getItemCount(); i++){
-                    if(jcbGrupo.getItemAt(i).equals(Gs)){
+                for(int i = 0; i < jcbProdS.getItemCount(); i++){
+                    if(jcbProdS.getItemAt(i).equals(Ps)){
                         index = i;
                         break;
                     }
                 } 
-                jcbGrupo.setSelectedIndex(index);
+                jcbProdS.setSelectedIndex(index);
             }catch(Exception e){
                 System.out.println(e.getMessage());
             }
+            //
+                    
+              //
+//            try{
+//                DaoGpServico daoG = new DaoGpServico();
+//                ResultSet resultSet = daoG.listarPorId(idGs);
+//                resultSet.next();
+//                String Gs = resultSet.getString("NOME");
+//                int index = 0;
+//                for(int i = 0; i < jcbGrupo.getItemCount(); i++){
+//                    if(jcbGrupo.getItemAt(i).equals(Gs)){
+//                        index = i;
+//                        break;
+//                    }
+//                } 
+//                jcbGrupo.setSelectedIndex(index);
+//            }catch(Exception e){
+//                System.out.println(e.getMessage());
+//            }
             //
             
             //
@@ -285,6 +309,24 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                 return false;
     }
     
+    private void carregarGrupoParaProdutoSelecionado() {
+        
+    String produtoSelecionado = jcbProdS.getSelectedItem().toString();
+
+    DaoOrdemServico daoO = new DaoOrdemServico();
+    DaoGpServico daoG = new DaoGpServico();
+
+    String grupo = daoO.obterGrupoDoBancoDeDados(produtoSelecionado);
+
+    if (grupo != null) {
+        jcbGrupo.setSelectedItem(grupo);
+        tfIdGrupo.setText(daoO.obterIdDoGrupoDoBancoDeDados(grupo));
+    } else {
+        jcbGrupo.setSelectedItem(null);
+        tfIdGrupo.setText(daoO.obterIdDoGrupoDoBancoDeDados(grupo));
+    }
+}
+
    private String conversaoData(String dataDigitada) {
     String stringData = "";
 
@@ -304,8 +346,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
 
     return stringData;
 }
-
-    
+   
     private void inserir(){
         DaoOrdemServico daoO = new DaoOrdemServico();
         
@@ -518,6 +559,31 @@ public class Ordem_de_servico extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
+        
+    private void carregarProdS(){
+        try{
+            DaoPrSr daoP = new DaoPrSr();
+
+            ResultSet resultSet = daoP.listarTodos();
+
+            while(resultSet.next()){
+                jcbProdS.addItem(resultSet.getString("P.NOME"));
+            }
+        }catch(Exception e){
+            
+        }
+    }
+        
+        private void recuperaIdProd(){
+        try{
+            DaoPrSr daoP = new DaoPrSr();
+            ResultSet resultSet = daoP.listarPorNome(jcbProdS.getSelectedItem().toString());
+            resultSet.next();
+            tfIdProdS.setText(resultSet.getString("P.ID"));
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
     
         private boolean camposObrigatoriosPreenchidos(JTextField campos[]){
             boolean b = true;
@@ -541,6 +607,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         carregarResp();
         carregarGrupos();
         carregarExec();
+        carregarProdS();
         
         }
         
@@ -580,7 +647,6 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         tfIdProdS = new javax.swing.JTextField();
-        tfDesc = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         tfQnt = new javax.swing.JTextField();
@@ -604,6 +670,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         tfIdExServ = new javax.swing.JTextField();
         ftPreUn = new JFormattedTextField(mfPreUn);
         ftTotal = new JFormattedTextField(mfPreTot);
+        jcbProdS = new javax.swing.JComboBox<>();
         tfIdVeiculo = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
@@ -705,8 +772,6 @@ public class Ordem_de_servico extends javax.swing.JFrame {
 
         tfIdProdS.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        tfDesc.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
         jLabel15.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel15.setText("Produto/Serviço");
 
@@ -786,6 +851,13 @@ public class Ordem_de_servico extends javax.swing.JFrame {
 
         ftTotal.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
 
+        jcbProdS.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jcbProdS.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jcbProdSItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -806,8 +878,8 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                                     .addComponent(jLabel13))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(tfDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel15))
+                                    .addComponent(jLabel15)
+                                    .addComponent(jcbProdS, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -870,12 +942,12 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfIdProdS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tfDesc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tfQnt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tfVun1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jcbGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jcbExecutor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ftPreUn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ftPreUn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jcbProdS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfDesc1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1154,6 +1226,11 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         recuperaIdEmp();
     }//GEN-LAST:event_jcbEmpresaItemStateChanged
 
+    private void jcbProdSItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jcbProdSItemStateChanged
+        // TODO add your handling code here:
+        recuperaIdProd();
+    }//GEN-LAST:event_jcbProdSItemStateChanged
+
     /**
      * @param args the command line arguments
      */
@@ -1239,10 +1316,10 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jcbExecutor;
     private javax.swing.JComboBox<String> jcbGrupo;
     private javax.swing.JComboBox<String> jcbMarcaVeiculo;
+    private javax.swing.JComboBox<String> jcbProdS;
     private javax.swing.JComboBox<String> jcbResponsavel;
     private javax.swing.JTextArea taDescCli;
     private javax.swing.JTextField tfAno;
-    private javax.swing.JTextField tfDesc;
     private javax.swing.JTextField tfDesc1;
     private javax.swing.JTextField tfId;
     private javax.swing.JTextField tfIdCliente;

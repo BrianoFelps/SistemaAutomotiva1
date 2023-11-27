@@ -106,7 +106,7 @@ public class DaoGpServico {
       
       public ResultSet listarPorNome(String nome){
         try{
-        sql = "SELECT ID, NOME FROM GRUPO_SERVICO WHERE NOME LIKE ?";
+        sql = "SELECT ID FROM GRUPO_SERVICO WHERE NOME LIKE ?";
         
             setStatement(getConexao().prepareStatement(sql));
             

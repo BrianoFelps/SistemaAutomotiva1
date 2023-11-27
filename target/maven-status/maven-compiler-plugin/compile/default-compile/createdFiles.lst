@@ -156,6 +156,7 @@ com\mycompany\dao\DaoGpServico.class
 com\mycompany\visao\marca\CadMarca$1.class
 com\mycompany\visao\PrSr\ListProdServ$5.class
 com\mycompany\visao\endereco\CadEndereco.class
+com\mycompany\visao\OrdServ\Ordem_de_servico$12.class
 com\mycompany\visao\principal\MenuPrincipal$4.class
 com\mycompany\visao\Veiculo\CadVeiculo$6.class
 com\mycompany\visao\gpServico\CadGpServico$2.class
@@ -175,6 +176,7 @@ com\mycompany\visao\Veiculo\CadVeiculo$7.class
 com\mycompany\visao\endereco\CadEndereco$7.class
 com\mycompany\visao\empresa\CadEmpresa$3.class
 com\mycompany\visao\PrSr\ListProdServ$6.class
+com\mycompany\visao\OrdServ\Ordem_de_servico$13.class
 com\mycompany\visao\empresa\ListEmpresa$6.class
 com\mycompany\modelo\ModCidade.class
 com\mycompany\visao\pessoa\CadPessoa$10.class

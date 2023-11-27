@@ -5,7 +5,12 @@
 package com.mycompany.dao;
 
 import com.mycompany.ferramentas.BancoDeDadosMySQL;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  *
@@ -13,7 +18,8 @@ import java.sql.Date;
  */
 public class DaoOrdemServico extends BancoDeDadosMySQL{
     private String sql;
-    
+    ResultSet rs = null;
+            
     public Boolean inserir (int id, int idEmp, int idVeic, int idCliente, int idGser, int idFuncionario, String obs, String expiracao){
         try{
         sql = "INSERT INTO ORDEM_DE_SERVICO (ID, IDEMPRESA, IDVEICULO, IDCLIENTE, IDFUNCIONARIO, OBSERVACAO, IDGSERVICO, EXPIRACAO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -80,6 +86,77 @@ public class DaoOrdemServico extends BancoDeDadosMySQL{
         }
     }
     
+public String obterGrupoDoBancoDeDados(String produto) {
+    try {
+        Connection conexao = getConexao();
+        sql = "SELECT G.NOME FROM PRODUTOSSERVICOS P INNER JOIN GRUPO_SERVICO G ON P.IDGRUPO = G.ID WHERE P.NOME LIKE ?";
+        PreparedStatement statement = conexao.prepareStatement(sql);
+
+        statement.setString(1, produto);
+
+        rs = statement.executeQuery();
+
+        if (rs.next()) {
+            return rs.getString("NOME");
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } finally {
+        fecharStatement(getStatement());
+        fecharResultSet(getResultado());
+        fecharConexao(getConexao());
+    }
+    return null;
+}
+
+public String obterIdDoGrupoDoBancoDeDados(String grupo) {
+    try {
+        sql = "SELECT ID FROM GRUPO_SERVICO WHERE NOME LIKE ?";
+
+        Connection conexao = getConexao();
+        PreparedStatement statement = conexao.prepareStatement(sql);
+
+        statement.setString(1, grupo);
+
+        ResultSet rs = statement.executeQuery();
+
+        if (rs.next()) {
+            return rs.getString("ID");
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } finally {
+        fecharStatement(getStatement());
+        fecharResultSet(getResultado());
+        fecharConexao(getConexao());
+    }
+    return "";
+}
+
+// Método para fechar um Statement
+private void fecharStatement(Statement statement) {
+    try {
+        if (statement != null) {
+            statement.close();
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+// Método para fechar um ResultSet
+private void fecharResultSet(ResultSet rs) {
+    try {
+        if (rs != null) {
+            rs.close();
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
     public int buscarProximoId (){
         int id = -1;
         
