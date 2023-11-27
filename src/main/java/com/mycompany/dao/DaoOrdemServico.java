@@ -86,45 +86,52 @@ public class DaoOrdemServico extends BancoDeDadosMySQL{
         }
     }
     
-public String obterGrupoDoBancoDeDados(String produto) {
-    try {
-        Connection conexao = getConexao();
-        sql = "SELECT G.NOME FROM PRODUTOSSERVICOS P INNER JOIN GRUPO_SERVICO G ON P.IDGRUPO = G.ID WHERE P.NOME LIKE ?";
-        PreparedStatement statement = conexao.prepareStatement(sql);
+        public String obterGrupoDoBancoDeDados(String produto) {
+            try {
+                Connection conexao = getConexao();
+                sql = "SELECT G.NOME FROM PRODUTOSSERVICOS P INNER JOIN GRUPO_SERVICO G ON P.IDGRUPO = G.ID WHERE P.NOME LIKE ?";
+                PreparedStatement statement = conexao.prepareStatement(sql);
 
-        statement.setString(1, produto);
+                statement.setString(1, produto);
 
-        rs = statement.executeQuery();
+                rs = statement.executeQuery();
 
-        if (rs.next()) {
-            return rs.getString("NOME");
+                if (rs.next()) {
+                    return rs.getString("NOME");
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return null;
-}
+        public String obterIdDoGrupoDoBancoDeDados(String grupo) {
+            try {
+                Connection conexao = getConexao();
+                sql = "SELECT ID FROM GRUPO_SERVICO WHERE NOME LIKE ?";
+                PreparedStatement statement = conexao.prepareStatement(sql);
 
-public String obterIdDoGrupoDoBancoDeDados(String grupo) {
-    try {
-        Connection conexao = getConexao();
-        sql = "SELECT ID FROM GRUPO_SERVICO WHERE NOME LIKE ?";
-        PreparedStatement statement = conexao.prepareStatement(sql);
+                statement.setString(1, grupo);
 
-        statement.setString(1, grupo);
+                rs = statement.executeQuery();
 
-        rs = statement.executeQuery();
+                if (rs.next()) {
+                    return rs.getString("ID");
+                }
 
-        if (rs.next()) {
-            return rs.getString("ID");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return "";
         }
 
-    } catch (SQLException e) {
-        e.printStackTrace();
+    public Double obterPreco(Double preco){
+        try{
+            
+            
+        }
     }
-    return "";
-}
 
     public int buscarProximoId (){
         int id = -1;

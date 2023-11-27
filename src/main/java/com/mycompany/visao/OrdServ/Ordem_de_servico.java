@@ -633,7 +633,6 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         jLabel16 = new javax.swing.JLabel();
         tfQnt = new javax.swing.JTextField();
         jLabel17 = new javax.swing.JLabel();
-        tfVun1 = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
         jcbGrupo = new javax.swing.JComboBox<>();
         jcbExecutor = new javax.swing.JComboBox<>();
@@ -653,6 +652,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         ftPreUn = new JFormattedTextField(mfPreUn);
         ftTotal = new JFormattedTextField(mfPreTot);
         jcbProdS = new javax.swing.JComboBox<>();
+        ftPreUn1 = new JFormattedTextField(mfPreTot);
         tfIdVeiculo = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
@@ -765,8 +765,6 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         jLabel17.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel17.setText("$ Unitário");
 
-        tfVun1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
         jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel18.setText("$ Total");
 
@@ -840,6 +838,8 @@ public class Ordem_de_servico extends javax.swing.JFrame {
             }
         });
 
+        ftPreUn1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -865,17 +865,17 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel16)
-                                        .addGap(74, 74, 74)
-                                        .addComponent(jLabel17))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(tfQnt, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(ftPreUn, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(ftPreUn, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jLabel16)
+                                        .addGap(74, 74, 74)
+                                        .addComponent(jLabel17)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel18)
-                                    .addComponent(tfVun1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(ftPreUn1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jcbGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -891,7 +891,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                                 .addComponent(jLabel22)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(ftTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(17, 482, Short.MAX_VALUE))
+                        .addGap(17, 472, Short.MAX_VALUE))
                     .addComponent(jScrollPane2)
                     .addComponent(jSeparator3)
                     .addComponent(jSeparator2)
@@ -925,11 +925,11 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfIdProdS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tfQnt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tfVun1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jcbGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jcbExecutor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ftPreUn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jcbProdS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jcbProdS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ftPreUn1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfDesc1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -946,8 +946,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                 .addGap(6, 6, 6)
                 .addComponent(jLabel23)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Produtos e serviços", jPanel2);
@@ -1255,6 +1254,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField ftFatura2;
     private javax.swing.JFormattedTextField ftPlaca;
     private javax.swing.JFormattedTextField ftPreUn;
+    private javax.swing.JFormattedTextField ftPreUn1;
     private javax.swing.JFormattedTextField ftTelefone;
     private javax.swing.JFormattedTextField ftTotal;
     private javax.swing.JButton jButton1;
@@ -1314,7 +1314,6 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     private javax.swing.JTextField tfIdVeiculo;
     private javax.swing.JTextField tfQnt;
     private javax.swing.JTextField tfVeiculo;
-    private javax.swing.JTextField tfVun1;
     // End of variables declaration//GEN-END:variables
 
 }
