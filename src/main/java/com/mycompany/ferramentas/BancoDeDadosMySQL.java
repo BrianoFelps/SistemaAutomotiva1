@@ -53,8 +53,8 @@ public class BancoDeDadosMySQL {
             private static void executarExclusao() {
         try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA)) {
             
-           // Define a data limite para 60 dias no futuro
-            long limite = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(60);
+           // Define a data limite para 60 dias no passado
+            long limite = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(60);
 
             // Cria a instrução SQL para excluir registros expirados
             String sql = "DELETE FROM ORDEM_DE_SERVICO WHERE EXPIRACAO < ?";

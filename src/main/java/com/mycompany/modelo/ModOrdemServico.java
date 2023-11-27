@@ -12,7 +12,7 @@ import java.sql.Date;
  */
 public class ModOrdemServico {
     private int id, idEmp, idVeic, idCliente, idProdSer, idFuncionario, idGs;
-    private String obs;
+    private String obs, data;
 
     public ModOrdemServico() {
     }
@@ -26,6 +26,7 @@ public class ModOrdemServico {
         this.idFuncionario = idFuncionario;
         this.obs = obs;
         this.idGs = idGs;
+        this.data = data;
     }
 
     public int getId() {
@@ -91,9 +92,17 @@ public class ModOrdemServico {
     public void setIdGs(int idGs) {
         this.idGs = idGs;
     }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
     
     @Override
     public String toString(){
-        return "ModOrdemServico{" + "id=" + id + ", idEmpresa =" + idEmp + ", idVeiculo=" + idVeic + ", idCliente=" + idCliente + ", idProdSer=" + idProdSer + ", idGservico =" + idGs + ", idFuncionario=" + idFuncionario + ", Observação=" + obs + '}';
+        return "ModOrdemServico{" + "id=" + id + ", idEmpresa =" + idEmp + ", idVeiculo=" + idVeic + ", idCliente=" + idCliente + ", idProdSer=" + idProdSer + ", idFuncionario=" + idFuncionario + ", Observação=" + obs + ", idGservico =" + idGs + ", Expiracao=" + data + '}';
     }
 }

@@ -24,7 +24,9 @@ import com.mycompany.modelo.ModPessoa;
 import com.mycompany.modelo.ModVeiculo;
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFormattedTextField;
@@ -79,33 +81,18 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         setExtendedState(MAXIMIZED_BOTH);
         BancoDeDadosMySQL.ExclusaoAutomatica();
         
-        carregarEmpresas();
-        carregarClientes();
-        carregarMarcas();
-        carregarResp();
-        carregarGrupos();
-        carregarExec();
+        CarregarAll();
         
         if (!existeDadosTemporarios()){
             DaoOrdemServico daoO = new DaoOrdemServico();
-            DaoCliente daoC = new DaoCliente();
-            DaoMarca daoM = new DaoMarca();
-            DaoFuncionario daoF = new DaoFuncionario();
-            DaoEmpresa daoE = new DaoEmpresa();
+            DaoVeiculo daoV = new DaoVeiculo();
             
             int id = daoO.buscarProximoId();
-            int idC = daoC.buscarProximoId();
-            int idM = daoM.buscarProximoId();
-            int idF = daoF.buscarProximoId();
-            int idE = daoE.buscarProximoId();
+            int idV = daoV.buscarProximoId();
             
             if(id>0){
                 tfId.setText(String.valueOf(id));
-                tfIdEmpresa.setText(String.valueOf(idE));
-                tfIdCliente.setText(String.valueOf(idC));
-                tfIdMV.setText(String.valueOf(idM));
-                tfIdResponsavel.setText(String.valueOf(idF));
-                tfIdExServ.setText(String.valueOf(idF));
+                tfIdVeiculo.setText(String.valueOf(idV));
             }
             btnAcao.setText(Constantes.BTN_SALVAR_TEXT);
             }else{
@@ -121,6 +108,8 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         tfIdVeiculo.setEnabled(false);
         tfIdProdS.setEnabled(false);
         tfIdExServ.setEnabled(false);
+        tfIdMV.setEnabled(false);
+        tfIdCliente.setEnabled(false);
     }
     
     private Boolean existeDadosTemporarios(){
@@ -133,6 +122,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
             int idGs = ((ModOrdemServico) DadosTemporarios.tempObject).getIdGs();
             int idFunc = ((ModOrdemServico) DadosTemporarios.tempObject).getIdFuncionario();
             String Obs =  ((ModOrdemServico) DadosTemporarios.tempObject).getObs();
+            String date = ((ModOrdemServico) DadosTemporarios.tempObject).getData();
             
             tfId.setText(String.valueOf(id));
             tfIdEmpresa.setText(String.valueOf(idEmp));
@@ -143,6 +133,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
             tfIdExServ.setText(String.valueOf(idFunc));
             taDescCli.setText(String.valueOf(Obs));
             tfIdGrupo.setText(String.valueOf(idGs));
+            ftExpira.setText(date);
               //
             try{
                 DaoEmpresa daoEmp = new DaoEmpresa();
@@ -258,9 +249,11 @@ public class Ordem_de_servico extends javax.swing.JFrame {
             //
             
             //
+            int idV = ((ModVeiculo)DadosTemporarios.tempObject1).getId();
             String veic = ((ModVeiculo) DadosTemporarios.tempObject1).getNome();
             String placa = ((ModVeiculo) DadosTemporarios.tempObject1).getPlaca();
             int ano = ((ModVeiculo) DadosTemporarios.tempObject1).getAno();
+            tfIdVeiculo.setText(String.valueOf(idV));
             tfVeiculo.setText(veic);
             ftPlaca.setText(placa);
             tfAno.setText(String.valueOf(ano));
@@ -292,10 +285,33 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                 return false;
     }
     
+   private String conversaoData(String dataDigitada) {
+    String stringData = "";
+
+    try {
+        DateFormat dfEntrada = new SimpleDateFormat("dd/MM/yyyy");
+        java.util.Date utilDate = dfEntrada.parse(dataDigitada);
+
+        DateFormat dfSaida = new SimpleDateFormat("yyyy-MM-dd");
+        stringData = dfSaida.format(utilDate);
+
+        // Você pode imprimir para verificar se a conversão está correta
+//        System.out.println(stringData);
+    } catch (ParseException e) {
+        e.printStackTrace();
+        // Trate a exceção ou informe ao usuário que a data está em formato incorreto
+    }
+
+    return stringData;
+}
+
+    
     private void inserir(){
         DaoOrdemServico daoO = new DaoOrdemServico();
         
-        if(daoO.inserir(Integer.parseInt(tfId.getText()), Integer.parseInt(tfIdEmpresa.getText()), Integer.parseInt(tfIdVeiculo.getText()), Integer.parseInt(tfIdCliente.getText()), Integer.parseInt(tfIdGrupo.getText()), Integer.parseInt(tfIdResponsavel.getText()), taDescCli.getText(), Date.valueOf(ftExpira.getText()))){
+         String stringData = conversaoData(ftExpira.getText());
+        
+        if(daoO.inserir(Integer.parseInt(tfId.getText()), Integer.parseInt(tfIdEmpresa.getText()), Integer.parseInt(tfIdVeiculo.getText()), Integer.parseInt(tfIdCliente.getText()), Integer.parseInt(tfIdGrupo.getText()), Integer.parseInt(tfIdResponsavel.getText()), taDescCli.getText(), stringData)){
         JOptionPane.showMessageDialog(null, "Dados da ordem de serviço adicionados ao banco de dados!");
         
         taDescCli.setText("");
@@ -322,7 +338,9 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     private void alterar(){
         DaoOrdemServico daoO = new DaoOrdemServico();
         
-        if(daoO.alterar(Integer.parseInt(tfId.getText()), Integer.parseInt(tfIdEmpresa.getText()), Integer.parseInt(tfIdVeiculo.getText()), Integer.parseInt(tfIdCliente.getText()), Integer.parseInt(tfIdGrupo.getText()), Integer.parseInt(tfIdResponsavel.getText()), taDescCli.getText(), Date.valueOf(ftExpira.getText()))){
+        String stringData = conversaoData(ftExpira.getText());
+        
+        if(daoO.alterar(Integer.parseInt(tfId.getText()), Integer.parseInt(tfIdEmpresa.getText()), Integer.parseInt(tfIdVeiculo.getText()), Integer.parseInt(tfIdCliente.getText()), Integer.parseInt(tfIdGrupo.getText()), Integer.parseInt(tfIdResponsavel.getText()), taDescCli.getText(), stringData)){
               JOptionPane.showMessageDialog(null, "Ordem de serviço alterada!");
               
             taDescCli.setText("");
@@ -514,6 +532,18 @@ public class Ordem_de_servico extends javax.swing.JFrame {
             }
             return b;
         }
+        
+        private void CarregarAll(){
+            
+        carregarEmpresas();
+        carregarClientes();
+        carregarMarcas();
+        carregarResp();
+        carregarGrupos();
+        carregarExec();
+        
+        }
+        
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -802,21 +832,22 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addComponent(tfIdExServ, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel20))))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel21)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tfDesc1, javax.swing.GroupLayout.PREFERRED_SIZE, 1034, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(jLabel23, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel22)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(ftTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 446, Short.MAX_VALUE))
+                        .addGap(17, 482, Short.MAX_VALUE))
                     .addComponent(jScrollPane2)
                     .addComponent(jSeparator3)
-                    .addComponent(jSeparator2))
+                    .addComponent(jSeparator2)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel21)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfDesc1, javax.swing.GroupLayout.PREFERRED_SIZE, 1034, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -1080,8 +1111,8 @@ public class Ordem_de_servico extends javax.swing.JFrame {
 
         if(camposObrigatoriosPreenchidos(new JTextField[]{tfVeiculo, tfAno, ftExpira, ftFatura1, ftFatura2, ftPlaca})){
             if(btnAcao.getText() == Constantes.BTN_SALVAR_TEXT){
-                inserir();
                 inserirVeiculo();
+                inserir();
 
                 tfId.setText(String.valueOf(daoO.buscarProximoId()));
                 tfIdVeiculo.setText(String.valueOf(daoV.buscarProximoId()));

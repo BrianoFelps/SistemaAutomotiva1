@@ -454,13 +454,6 @@
                                               </Group>
                                           </Group>
                                       </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel21" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="tfDesc1" min="-2" pref="1034" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="jButton1" max="32767" attributes="0"/>
-                                      </Group>
                                       <Component id="jLabel23" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel22" min="-2" max="-2" attributes="0"/>
@@ -468,11 +461,19 @@
                                           <Component id="ftTotal" min="-2" pref="243" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <EmptySpace min="0" pref="446" max="32767" attributes="0"/>
+                                  <EmptySpace min="17" pref="482" max="32767" attributes="0"/>
                               </Group>
                               <Component id="jScrollPane2" max="32767" attributes="0"/>
                               <Component id="jSeparator3" alignment="0" max="32767" attributes="0"/>
                               <Component id="jSeparator2" alignment="0" max="32767" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jLabel21" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="tfDesc1" min="-2" pref="1034" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="jButton1" min="-2" pref="216" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>

@@ -14,9 +14,9 @@ import java.sql.Date;
 public class DaoOrdemServico extends BancoDeDadosMySQL{
     private String sql;
     
-    public Boolean inserir (int id, int idEmp, int idVeic, int idCliente, int idGser, int idFuncionario, String obs, Date expiracao){
+    public Boolean inserir (int id, int idEmp, int idVeic, int idCliente, int idGser, int idFuncionario, String obs, String expiracao){
         try{
-        sql = "INSERT INTO ORDEM_DE_SERVICO (ID, IDEMPRESA, IDVEICULO, IDCLIENTE, IDGSERVICO, IDFUNCIONARIO, OBSERVACAO, EXPIRACAO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        sql = "INSERT INTO ORDEM_DE_SERVICO (ID, IDEMPRESA, IDVEICULO, IDCLIENTE, IDFUNCIONARIO, OBSERVACAO, IDGSERVICO, EXPIRACAO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         setStatement(getConexao().prepareStatement(sql));
         
@@ -24,10 +24,10 @@ public class DaoOrdemServico extends BancoDeDadosMySQL{
         getStatement().setInt(2, idEmp);
         getStatement().setInt(3, idVeic);
         getStatement().setInt(4, idCliente);
-        getStatement().setInt(5, idGser);
-        getStatement().setInt(6, idFuncionario);
-        getStatement().setString(7, obs);
-        getStatement().setDate(8, expiracao);
+        getStatement().setInt(5, idFuncionario);
+        getStatement().setString(6, obs);
+        getStatement().setInt(7, idGser);
+        getStatement().setString(8, expiracao);
 
             getStatement().executeUpdate();
             
@@ -39,20 +39,20 @@ public class DaoOrdemServico extends BancoDeDadosMySQL{
         }
     }
     
-    public Boolean alterar (int id, int nidEmp, int nidVeic, int nidCliente, int nidGser, int nidFuncionario, String nobs, Date nEx){
+    public Boolean alterar (int id, int nidEmp, int nidVeic, int nidCliente, int nidGser, int nidFuncionario, String nobs, String nEx){
     try{
-        sql = "UPDATE ORDEM_DE_SERVICO SET IDEMPRESA = ?, IDVEICULO = ?, IDCLIENTE = ?, IDGSERVICO = ?, IDFUNCIONARIO = ?, OBSERVACAO = ?, EXPIRACAO = ? WHERE ID= ?";
+        sql = "UPDATE ORDEM_DE_SERVICO SET IDEMPRESA = ?, IDVEICULO = ?, IDCLIENTE = ?, IDFUNCIONARIO = ?, OBSERVACAO = ?, IDGSERVICO = ?, EXPIRACAO = ? WHERE ID= ?";
         
         setStatement(getConexao().prepareStatement(sql));
         
         getStatement().setInt(1, nidEmp);
         getStatement().setInt(2, nidVeic);
         getStatement().setInt(3, nidCliente);
-        getStatement().setInt(4, nidGser);
-        getStatement().setInt(5, nidFuncionario);
-        getStatement().setString(6, nobs);
-        getStatement().setInt(7, id);
-        getStatement().setDate(8, nEx);
+        getStatement().setInt(4, nidFuncionario);
+        getStatement().setString(5, nobs);
+        getStatement().setInt(6, nidGser);
+        getStatement().setString(7, nEx);
+        getStatement().setInt(8, id);
         
             getStatement().executeUpdate();
             
