@@ -105,16 +105,17 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         }
         setLocationRelativeTo(null);
         
-        tfId.setEnabled(false);
-        tfIdProdS.setEnabled(false);
-        tfIdEmpresa.setEnabled(false);
-        tfIdGrupo.setEnabled(false);
-        tfIdResponsavel.setEnabled(false);
-        tfIdVeiculo.setEnabled(false);
-        tfIdProdS.setEnabled(false);
-        tfIdExServ.setEnabled(false);
-        tfIdMV.setEnabled(false);
-        tfIdCliente.setEnabled(false);
+        tfId.setVisible(false);
+        tfIdProdS.setVisible(false);
+        tfIdEmpresa.setVisible(false);
+        tfIdGrupo.setVisible(false);
+        tfIdResponsavel.setVisible(false);
+        tfIdVeiculo.setVisible(false);
+        tfIdProdS.setVisible(false);
+        tfIdExServ.setVisible(false);
+        tfIdMV.setVisible(false);
+        tfIdCliente.setVisible(false);
+        jcbGrupo.setEnabled(false);
     }
     
     private Boolean existeDadosTemporarios(){
@@ -251,25 +252,6 @@ public class Ordem_de_servico extends javax.swing.JFrame {
             }catch(Exception e){
                 System.out.println(e.getMessage());
             }
-            //
-                    
-              //
-//            try{
-//                DaoGpServico daoG = new DaoGpServico();
-//                ResultSet resultSet = daoG.listarPorId(idGs);
-//                resultSet.next();
-//                String Gs = resultSet.getString("NOME");
-//                int index = 0;
-//                for(int i = 0; i < jcbGrupo.getItemCount(); i++){
-//                    if(jcbGrupo.getItemAt(i).equals(Gs)){
-//                        index = i;
-//                        break;
-//                    }
-//                } 
-//                jcbGrupo.setSelectedIndex(index);
-//            }catch(Exception e){
-//                System.out.println(e.getMessage());
-//            }
             //
             
             //

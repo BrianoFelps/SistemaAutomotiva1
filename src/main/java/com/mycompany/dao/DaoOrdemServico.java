@@ -102,24 +102,19 @@ public String obterGrupoDoBancoDeDados(String produto) {
 
     } catch (SQLException e) {
         e.printStackTrace();
-    } finally {
-        fecharStatement(getStatement());
-        fecharResultSet(getResultado());
-        fecharConexao(getConexao());
     }
     return null;
 }
 
 public String obterIdDoGrupoDoBancoDeDados(String grupo) {
     try {
-        sql = "SELECT ID FROM GRUPO_SERVICO WHERE NOME LIKE ?";
-
         Connection conexao = getConexao();
+        sql = "SELECT ID FROM GRUPO_SERVICO WHERE NOME LIKE ?";
         PreparedStatement statement = conexao.prepareStatement(sql);
 
         statement.setString(1, grupo);
 
-        ResultSet rs = statement.executeQuery();
+        rs = statement.executeQuery();
 
         if (rs.next()) {
             return rs.getString("ID");
@@ -127,34 +122,8 @@ public String obterIdDoGrupoDoBancoDeDados(String grupo) {
 
     } catch (SQLException e) {
         e.printStackTrace();
-    } finally {
-        fecharStatement(getStatement());
-        fecharResultSet(getResultado());
-        fecharConexao(getConexao());
     }
     return "";
-}
-
-// Método para fechar um Statement
-private void fecharStatement(Statement statement) {
-    try {
-        if (statement != null) {
-            statement.close();
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-}
-
-// Método para fechar um ResultSet
-private void fecharResultSet(ResultSet rs) {
-    try {
-        if (rs != null) {
-            rs.close();
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
 }
 
     public int buscarProximoId (){
