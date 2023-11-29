@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 
 /**
  *
@@ -126,12 +127,28 @@ public class DaoOrdemServico extends BancoDeDadosMySQL{
             return "";
         }
 
-    public Double obterPreco(Double preco){
+    public String obterPreco(String produto){
         try{
+            Connection conexao = getConexao();
+                sql = "SELECT PRECO FROM PRODUTOSSERVICOS WHERE NOME LIKE ?";
+                PreparedStatement statement = conexao.prepareStatement(sql);
+
+                statement.setString(1, produto);
+
+                rs = statement.executeQuery();
+
+                 if (rs.next()) {
             
-            
+            // Formatando o preço para a máscara "R$###,##"
+             DecimalFormat df = new DecimalFormat("R$###,000.00");
+            return df.format(rs.getDouble("PRECO"));
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        return "";
         }
-    }
 
     public int buscarProximoId (){
         int id = -1;

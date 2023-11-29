@@ -31,6 +31,8 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -40,53 +42,19 @@ public class Ordem_de_servico extends javax.swing.JFrame {
 
     MaskFormatter mfFatura, mfPlaca, mfTel, mfPreUn, mfPreTot;
     
-    
     /**
      * Creates new form Ordem_de_servico
      */
     public Ordem_de_servico() {
-        try {
-            mfPreTot = new MaskFormatter("R$##,###.##");
-        } catch (ParseException ex) {
-            System.out.println("Ocorreu um erro na criação da máscara de preco total!");
-        }
-
-        try {
-            mfPreUn = new MaskFormatter("R$##.##");
-        } catch (ParseException ex) {
-            System.out.println("Ocorreu um erro na criação da máscara de preco un!");
-        }
-
-        try {
-            mfTel = new MaskFormatter("(##)#####-####");
-        } catch (ParseException ex) {
-            System.out.println("Ocorreu um erro na criação da máscara de telefone!");
-        }
-
-        try {
-            mfPlaca = new MaskFormatter("UUU-#U##");
-        } catch (ParseException ex) {
-            System.out.println("Ocorreu um erro na criação da máscara de placa!");
-        }
-
-        try {
-            mfFatura = new MaskFormatter("##/##/####");
-        } catch (ParseException ex) {
-            System.out.println("Ocorreu um erro na criação da máscara de fatura!");
-        }
+        carregarMascaras();
         
-           initComponents();
+        initComponents();
         setExtendedState(MAXIMIZED_BOTH);
         BancoDeDadosMySQL.ExclusaoAutomatica();
     
         CarregarAll();
-        
-        jcbProdS.addActionListener(new ActionListener() {
-                @Override
-                    public void actionPerformed(ActionEvent e) {
-                carregarGrupoParaProdutoSelecionado();
-            }
-            });
+        CarregarActionListeners();        
+        atualizarPreco();
         
         if (!existeDadosTemporarios()){
             DaoOrdemServico daoO = new DaoOrdemServico();
@@ -106,16 +74,16 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         
         tfId.setVisible(false);
-        tfIdProdS.setVisible(false);
+        tfIdProdS.setEnabled(false);
         tfIdEmpresa.setVisible(false);
         tfIdGrupo.setVisible(false);
         tfIdResponsavel.setVisible(false);
         tfIdVeiculo.setVisible(false);
-        tfIdProdS.setVisible(false);
         tfIdExServ.setVisible(false);
         tfIdMV.setVisible(false);
         tfIdCliente.setVisible(false);
         jcbGrupo.setEnabled(false);
+        ftPreTot.setEnabled(false);
     }
     
     private Boolean existeDadosTemporarios(){
@@ -291,12 +259,64 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                 return false;
     }
     
+     private void atualizarPreco (){
+      
+         tfQnt.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                calculaValorTotal();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                 calculaValorTotal();
+                 System.out.println("Método chamado");
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                // Este método é geralmente ignorado para campos de texto simples
+            }
+        });
+    }
+     
+    private void carregarMascaras(){
+    try {
+            mfPreTot = new MaskFormatter("R$###.##");
+        } catch (ParseException ex) {
+            System.out.println("Ocorreu um erro na criação da máscara de preco total!");
+        }
+
+        try {
+            mfPreUn = new MaskFormatter("R$###.##");
+        } catch (ParseException ex) {
+            System.out.println("Ocorreu um erro na criação da máscara de preco un!");
+        }
+
+        try {
+            mfTel = new MaskFormatter("(##)#####-####");
+        } catch (ParseException ex) {
+            System.out.println("Ocorreu um erro na criação da máscara de telefone!");
+        }
+
+        try {
+            mfPlaca = new MaskFormatter("UUU-#U##");
+        } catch (ParseException ex) {
+            System.out.println("Ocorreu um erro na criação da máscara de placa!");
+        }
+
+        try {
+            mfFatura = new MaskFormatter("##/##/####");
+        } catch (ParseException ex) {
+            System.out.println("Ocorreu um erro na criação da máscara de fatura!");
+        }
+    }
+    
     private void carregarGrupoParaProdutoSelecionado() {
         
     String produtoSelecionado = jcbProdS.getSelectedItem().toString();
 
     DaoOrdemServico daoO = new DaoOrdemServico();
-    DaoGpServico daoG = new DaoGpServico();
 
     String grupo = daoO.obterGrupoDoBancoDeDados(produtoSelecionado);
 
@@ -308,7 +328,46 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         tfIdGrupo.setText(daoO.obterIdDoGrupoDoBancoDeDados(grupo));
     }
 }
+    
+    private void carregarGrupoEPrecoParaProdutoSelecionado() {
+    String produtoSelecionado = jcbProdS.getSelectedItem().toString();
 
+    // Carrega o grupo para o produto selecionado
+    carregarGrupoParaProdutoSelecionado();
+
+    // Obtém o preço do produto e exibe na JTextField tfPreUn
+    DaoOrdemServico daoO = new DaoOrdemServico();
+    String preco = daoO.obterPreco(produtoSelecionado);
+    
+    if (preco != null) {
+    preco = preco.replace(",", "");
+    ftPreUn.setText(preco);
+} else {
+    // Lógica para lidar com o caso de preço nulo
+    ftPreUn.setText("Preço não disponível");
+}
+}
+    
+    private void calculaValorTotal(){
+        String precoUnitario = ftPreUn.getText();
+        String quantidade = tfQnt.getText();
+        
+         System.out.println("Quantidade: " + quantidade);
+        System.out.println("Preço Unitário: " + precoUnitario);
+        
+        try{
+       precoUnitario = precoUnitario.replace("R$", "");
+       precoUnitario = precoUnitario.replace(".", "");
+      
+        Double valorTot;
+        valorTot = Double.parseDouble(precoUnitario) * Double.parseDouble(quantidade);
+        
+        ftPreTot.setText(String.valueOf(valorTot));
+    } catch (NumberFormatException ex) {
+       ftPreTot.setText("Erro");
+    }
+    }
+    
    private String conversaoData(String dataDigitada) {
     String stringData = "";
 
@@ -593,6 +652,17 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         
         }
         
+        private void CarregarActionListeners(){
+            
+            jcbProdS.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Carrega o grupo e preço para o produto selecionado
+            carregarGrupoEPrecoParaProdutoSelecionado();
+        }
+    });
+}
+        
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -652,7 +722,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         ftPreUn = new JFormattedTextField(mfPreUn);
         ftTotal = new JFormattedTextField(mfPreTot);
         jcbProdS = new javax.swing.JComboBox<>();
-        ftPreUn1 = new JFormattedTextField(mfPreTot);
+        ftPreTot = new JFormattedTextField(mfPreTot);
         tfIdVeiculo = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
@@ -761,12 +831,17 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         jLabel16.setText("Qnt");
 
         tfQnt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        tfQnt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                tfQntFocusLost(evt);
+            }
+        });
 
         jLabel17.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel17.setText("$ Unitário");
+        jLabel17.setText("R$ Unitário");
 
         jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel18.setText("$ Total");
+        jLabel18.setText("R$ Total");
 
         jcbGrupo.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jcbGrupo.addItemListener(new java.awt.event.ItemListener() {
@@ -804,17 +879,17 @@ public class Ordem_de_servico extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Código", "Referência", "Descrição", "Qnt", "R$ Unitário", "R$ Total", "Executor", "", ""
+                "Código", "Descrição", "Qnt", "R$ Unitário", "R$ Total", "Executor", ""
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -823,8 +898,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(7).setPreferredWidth(5);
-            jTable1.getColumnModel().getColumn(8).setPreferredWidth(5);
+            jTable1.getColumnModel().getColumn(6).setPreferredWidth(5);
         }
 
         ftPreUn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -838,7 +912,8 @@ public class Ordem_de_servico extends javax.swing.JFrame {
             }
         });
 
-        ftPreUn1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        ftPreTot.setEditable(false);
+        ftPreTot.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -875,7 +950,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel18)
-                                    .addComponent(ftPreUn1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(ftPreTot, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jcbGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -929,7 +1004,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                     .addComponent(jcbExecutor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ftPreUn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jcbProdS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ftPreUn1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ftPreTot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tfDesc1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1212,6 +1287,11 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         recuperaIdProd();
     }//GEN-LAST:event_jcbProdSItemStateChanged
 
+    private void tfQntFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfQntFocusLost
+        // TODO add your handling code here:
+        calculaValorTotal();
+    }//GEN-LAST:event_tfQntFocusLost
+
     /**
      * @param args the command line arguments
      */
@@ -1253,8 +1333,8 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField ftFatura1;
     private javax.swing.JFormattedTextField ftFatura2;
     private javax.swing.JFormattedTextField ftPlaca;
+    private javax.swing.JFormattedTextField ftPreTot;
     private javax.swing.JFormattedTextField ftPreUn;
-    private javax.swing.JFormattedTextField ftPreUn1;
     private javax.swing.JFormattedTextField ftTelefone;
     private javax.swing.JFormattedTextField ftTotal;
     private javax.swing.JButton jButton1;

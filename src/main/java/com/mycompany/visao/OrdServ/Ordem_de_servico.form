@@ -438,7 +438,7 @@
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
-                                              <Component id="ftPreUn1" min="-2" pref="105" max="-2" attributes="0"/>
+                                              <Component id="ftPreTot" min="-2" pref="105" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
@@ -506,7 +506,7 @@
                               <Component id="jcbExecutor" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="ftPreUn" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jcbProdS" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="ftPreUn1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="ftPreTot" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -577,13 +577,16 @@
                       <Font name="Segoe UI" size="14" style="0"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="tfQntFocusLost"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel17">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Segoe UI" size="16" style="0"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="$ Unit&#xe1;rio"/>
+                    <Property name="text" type="java.lang.String" value="R$ Unit&#xe1;rio"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel18">
@@ -591,7 +594,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Segoe UI" size="16" style="0"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="$ Total"/>
+                    <Property name="text" type="java.lang.String" value="R$ Total"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="jcbGrupo">
@@ -695,15 +698,13 @@
                     <Component class="javax.swing.JTable" name="jTable1">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="9" rowCount="4">
+                          <Table columnCount="7" rowCount="4">
                             <Column editable="false" title="C&#xf3;digo" type="java.lang.Object"/>
-                            <Column editable="false" title="Refer&#xea;ncia" type="java.lang.Object"/>
                             <Column editable="false" title="Descri&#xe7;&#xe3;o" type="java.lang.Object"/>
                             <Column editable="false" title="Qnt" type="java.lang.Object"/>
                             <Column editable="false" title="R$ Unit&#xe1;rio" type="java.lang.Object"/>
                             <Column editable="false" title="R$ Total" type="java.lang.Object"/>
                             <Column editable="false" title="Executor" type="java.lang.Object"/>
-                            <Column editable="false" title="" type="java.lang.Object"/>
                             <Column editable="false" title="" type="java.lang.Object"/>
                           </Table>
                         </Property>
@@ -735,16 +736,6 @@
                               <Renderer/>
                             </Column>
                             <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                              <Title/>
-                              <Editor/>
-                              <Renderer/>
-                            </Column>
-                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                              <Title/>
-                              <Editor/>
-                              <Renderer/>
-                            </Column>
-                            <Column maxWidth="-1" minWidth="-1" prefWidth="5" resizable="true">
                               <Title/>
                               <Editor/>
                               <Renderer/>
@@ -803,8 +794,9 @@
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
                 </Component>
-                <Component class="javax.swing.JFormattedTextField" name="ftPreUn1">
+                <Component class="javax.swing.JFormattedTextField" name="ftPreTot">
                   <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Segoe UI" size="14" style="0"/>
                     </Property>
