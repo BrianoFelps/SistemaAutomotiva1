@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.text.MaskFormatter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -53,8 +54,28 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         BancoDeDadosMySQL.ExclusaoAutomatica();
     
         CarregarAll();
-        CarregarActionListeners();        
-        atualizarPreco();
+        CarregarActionListeners();
+        
+        carregarGrupoEPrecoParaProdutoSelecionado();
+        
+        tfQnt.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                atualizarPreco();
+                System.out.println("Método chamado");
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                 atualizarPreco();
+                 System.out.println("Método chamado");
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                // Este método é geralmente ignorado para campos de texto simples
+            }
+        });
         
         if (!existeDadosTemporarios()){
             DaoOrdemServico daoO = new DaoOrdemServico();
@@ -258,28 +279,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         }else
                 return false;
     }
-    
-     private void atualizarPreco (){
-      
-         tfQnt.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                calculaValorTotal();
-            }
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                 calculaValorTotal();
-                 System.out.println("Método chamado");
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                // Este método é geralmente ignorado para campos de texto simples
-            }
-        });
-    }
-     
     private void carregarMascaras(){
     try {
             mfPreTot = new MaskFormatter("R$###.##");
@@ -346,27 +346,61 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     // Lógica para lidar com o caso de preço nulo
     ftPreUn.setText("Preço não disponível");
 }
-}
+    }
     
-    private void calculaValorTotal(){
-        String precoUnitario = ftPreUn.getText();
-        String quantidade = tfQnt.getText();
+//    private double calculaValorTotal(String prodS, String grupo){
+//        String precoUnitario = ftPreUn.getText();
+//        String quantidade = tfQnt.getText();
+//        
+//         System.out.println("Quantidade: " + quantidade);
+//        System.out.println("Preço Unitário: " + precoUnitario);
+//        
+//       precoUnitario = precoUnitario.replace("R$", "");
+//       precoUnitario = precoUnitario.replace(".", "");
+//      
+//        Double valorTot;
+//        valorTot = Double.parseDouble(precoUnitario) * Double.parseDouble(quantidade);
+//        
+//    return prodS.length() * grupo.length();
+//    }
+
+    private void atualizarPreco() {
+        SwingUtilities.invokeLater(() -> {
         
-         System.out.println("Quantidade: " + quantidade);
-        System.out.println("Preço Unitário: " + precoUnitario);
-        
-        try{
-       precoUnitario = precoUnitario.replace("R$", "");
-       precoUnitario = precoUnitario.replace(".", "");
-      
-        Double valorTot;
-        valorTot = Double.parseDouble(precoUnitario) * Double.parseDouble(quantidade);
-        
-        ftPreTot.setText(String.valueOf(valorTot));
-    } catch (NumberFormatException ex) {
-       ftPreTot.setText("Erro");
-    }
-    }
+        // Obter os valores dos campos
+        String qntText = tfQnt.getText();
+        String preUnText = ftPreUn.getText();
+
+         preUnText = preUnText.replaceAll("[^\\d.]+", "");
+        System.out.println("qntText (sem máscara): " + qntText + ", preUnText (sem máscara): " + preUnText);
+        // Verificar se os valores são numéricos
+        try {
+            double qnt = Double.parseDouble(qntText);
+            
+             if (!preUnText.isEmpty()) {
+                double preUn = Double.parseDouble(preUnText);
+
+            // Adicione mensagens de depuração para verificar os valores após a conversão
+            System.out.println("qnt: " + qnt + ", preUn: " + preUn);
+            
+            // Calcular o preço total
+            double preTot = qnt * preUn;
+
+            // Definir o resultado no tfPreTot
+             SwingUtilities.invokeLater(() -> {
+                ftPreTot.setText(String.valueOf(preTot));
+            });
+             }else{
+             JOptionPane.showMessageDialog(null, "Preço unitário vazio!");
+             }
+        } catch (NumberFormatException ex) {
+            // Lidar com a entrada inválida (não numérica)
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "O cálculo do valor total falhou");
+        }
+    });
+                }
+                
     
    private String conversaoData(String dataDigitada) {
     String stringData = "";
@@ -672,6 +706,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane3 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
@@ -1208,15 +1243,17 @@ public class Ordem_de_servico extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jScrollPane3.setViewportView(jPanel1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1867, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 861, Short.MAX_VALUE)
         );
 
         pack();
@@ -1288,8 +1325,8 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     }//GEN-LAST:event_jcbProdSItemStateChanged
 
     private void tfQntFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfQntFocusLost
-        // TODO add your handling code here:
-        calculaValorTotal();
+        
+        atualizarPreco();
     }//GEN-LAST:event_tfQntFocusLost
 
     /**
@@ -1368,6 +1405,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
