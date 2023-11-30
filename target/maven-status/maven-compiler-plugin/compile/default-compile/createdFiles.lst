@@ -171,6 +171,7 @@ com\mycompany\visao\funcionario\CadFuncionario$7.class
 com\mycompany\visao\cidade\ListCidade$2.class
 com\mycompany\dao\DaoEmpresa.class
 com\mycompany\visao\funcionario\CadFuncionario$10.class
+com\mycompany\visao\OrdServ\Ordem_de_servico$16.class
 com\mycompany\visao\cidade\CadCidade.class
 com\mycompany\visao\Veiculo\CadVeiculo$7.class
 com\mycompany\visao\endereco\CadEndereco$7.class

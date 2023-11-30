@@ -34,6 +34,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.MaskFormatter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -372,16 +373,12 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         String preUnText = ftPreUn.getText();
 
          preUnText = preUnText.replaceAll("[^\\d.]+", "");
-        System.out.println("qntText (sem máscara): " + qntText + ", preUnText (sem máscara): " + preUnText);
         // Verificar se os valores são numéricos
         try {
             double qnt = Double.parseDouble(qntText);
             
              if (!preUnText.isEmpty()) {
                 double preUn = Double.parseDouble(preUnText);
-
-            // Adicione mensagens de depuração para verificar os valores após a conversão
-            System.out.println("qnt: " + qnt + ", preUn: " + preUn);
             
             // Calcular o preço total
             double preTot = qnt * preUn;
@@ -396,7 +393,6 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         } catch (NumberFormatException ex) {
             // Lidar com a entrada inválida (não numérica)
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "O cálculo do valor total falhou");
         }
     });
                 }
@@ -905,6 +901,11 @@ public class Ordem_de_servico extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton1.setText("Incluir item na O.S");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel22.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
         jLabel22.setText("Total da O.S");
@@ -914,17 +915,17 @@ public class Ordem_de_servico extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null},
+                {null},
+                {null},
+                {null}
             },
             new String [] {
-                "Código", "Descrição", "Qnt", "R$ Unitário", "R$ Total", "Executor", ""
+                ""
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -933,7 +934,7 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(6).setPreferredWidth(5);
+            jTable1.getColumnModel().getColumn(0).setPreferredWidth(5);
         }
 
         ftPreUn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -1328,6 +1329,30 @@ public class Ordem_de_servico extends javax.swing.JFrame {
         
         atualizarPreco();
     }//GEN-LAST:event_tfQntFocusLost
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = new DefaultTableModel();
+        jTable1.setModel(model);
+        
+        // Adicionar colunas ao modelo da tabela
+        model.addColumn("Código");
+        model.addColumn("Produto/serviço");
+        model.addColumn("Quantidade");
+        model.addColumn("Preço Unitário");
+        model.addColumn("Preço Total");
+        model.addColumn("Executor");
+        
+                String id = tfId.getText();
+                String produto = jcbProdS.getSelectedItem().toString();
+                String quantidade = tfQnt.getText();
+                String preTot = ftPreTot.getText();
+                String precoUnitario = ftPreUn.getText();
+                String execServico = (String) jcbExecutor.getSelectedItem();
+
+                // Adicionar uma nova linha com os dados do usuário
+                model.addRow(new Object[]{id, produto, quantidade, precoUnitario, preTot, execServico});
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
